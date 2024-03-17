@@ -79,6 +79,7 @@ func main() {
 	http.HandleFunc("/uptime", uptime_route)
 	http.HandleFunc("/", index_route)
 
+	log.Println("Will listen on 127.0.0.1:4525")
 	err := http.ListenAndServe("127.0.0.1:4525", nil)
 	log.Fatalf("http listener exited: %v", err)
 }
