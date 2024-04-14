@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os/exec"
+
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/cmd"
 )
 
 //go:embed index.html
 var index string
 
-func make_route(inner func() string) func(http.ResponseWriter, *http.Request) {
+func makeRoute(inner func() string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			w.WriteHeader(405)
@@ -24,7 +25,7 @@ func make_route(inner func() string) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func as_html(inner func() (*string, *string)) func() string {
+func asHtml(inner func() (*string, *string)) func() string {
 	return func() string {
 		val, err := inner()
 
@@ -46,33 +47,18 @@ func as_html(inner func() (*string, *string)) func() string {
 	}
 }
 
-func commandFmt(cmd string, args ...string) func() (*string, *string) {
-	return func() (*string, *string) {
-		cmd := exec.Command(cmd, args...)
-		out, err := cmd.CombinedOutput()
-		val := string(out)
-
-		if err != nil {
-			msg := fmt.Sprintf("%s: %v\n\n%s", cmd, err, val)
-			return nil, &msg
-		}
-
-		return &val, nil
-	}
-}
-
 func main() {
-	uptime := commandFmt("uptime")
-	zpoolStatus := commandFmt("zpool", "status")
-	caddyStatus := commandFmt("systemctl", "status", "caddy")
+	uptime := cmd.Runner("uptime")
+	zpoolStatus := cmd.Runner("zpool", "status")
+	caddyStatus := cmd.Runner("systemctl", "status", "caddy")
 
-	index_route := make_route(func() string {
+	index_route := makeRoute(func() string {
 		return index
 	})
 
-	zpool_status_route := make_route(as_html(zpoolStatus))
-	caddy_status_route := make_route(as_html(caddyStatus))
-	uptime_route := make_route(as_html(uptime))
+	zpool_status_route := makeRoute(asHtml(zpoolStatus))
+	caddy_status_route := makeRoute(asHtml(caddyStatus))
+	uptime_route := makeRoute(asHtml(uptime))
 
 	http.HandleFunc("/zpool-status", zpool_status_route)
 	http.HandleFunc("/caddy-status", caddy_status_route)
