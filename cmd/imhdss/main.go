@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/cmd"
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/sys"
 )
 
 //go:embed index.html
@@ -48,7 +49,7 @@ func asHtml(inner func() (*string, *string)) func() string {
 }
 
 func main() {
-	uptime := cmd.Runner("uptime")
+	uptime := sys.Uptime()
 	zpoolStatus := cmd.Runner("zpool", "status")
 	caddyStatus := cmd.Runner("systemctl", "status", "caddy")
 
