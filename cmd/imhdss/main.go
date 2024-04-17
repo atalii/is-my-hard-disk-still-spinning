@@ -1,17 +1,14 @@
 package main
 
 import (
-	_ "embed"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/cmd"
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/sys"
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/routes"
 )
-
-//go:embed index.html
-var index string
 
 func makeRoute(inner func() string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -32,14 +29,14 @@ func asHtml(inner func() (*string, *string)) func() string {
 
 		if val != nil {
 			return fmt.Sprintf(
-				"<div class=\"val\"><pre>%v</pre></div>",
+				"<div class=\"val\">%v</div>",
 				*val,
 			)
 		}
 
 		if err != nil {
 			return fmt.Sprintf(
-				"<div class=\"err\"><pre>%v</pre></div>",
+				"<div class=\"err\">%v</div>",
 				*err,
 			)
 		}
@@ -50,21 +47,16 @@ func asHtml(inner func() (*string, *string)) func() string {
 
 func main() {
 	uptime := sys.Uptime()
-	zpoolStatus := cmd.Runner("zpool", "status")
-	caddyStatus := cmd.Runner("systemctl", "status", "caddy")
 
-	index_route := makeRoute(func() string {
-		return index
-	})
-
-	zpool_status_route := makeRoute(asHtml(zpoolStatus))
-	caddy_status_route := makeRoute(asHtml(caddyStatus))
+	zpool_status_route := makeRoute(asHtml(cmd.Runner("zpool", "status")))
+	caddy_status_route := makeRoute(asHtml(cmd.Runner("systemctl", "status", "caddy")))
 	uptime_route := makeRoute(asHtml(uptime))
 
-	http.HandleFunc("/zpool-status", zpool_status_route)
-	http.HandleFunc("/caddy-status", caddy_status_route)
-	http.HandleFunc("/uptime", uptime_route)
-	http.HandleFunc("/", index_route)
+	http.HandleFunc("/stats/zpool-status", zpool_status_route)
+	http.HandleFunc("/stats/caddy-status", caddy_status_route)
+	http.HandleFunc("/stats/uptime", uptime_route)
+	http.HandleFunc("/", routes.Index)
+	http.HandleFunc("/styles.css", routes.Styles)
 
 	log.Println("Will listen on 127.0.0.1:4525")
 	err := http.ListenAndServe("127.0.0.1:4525", nil)

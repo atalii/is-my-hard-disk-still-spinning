@@ -18,7 +18,7 @@ func Uptime() func() (*string, *string) {
 		uptime_days    := uptime_hours / 24
 
 		val := fmt.Sprintf(
-			"Up %d days, %d hours, and %d minutes.",
+			"Online and uninterrupted for %d days, %d hours, and %d minutes.",
 			uptime_days, uptime_hours % 24, uptime_minutes % 60,
 		)
 

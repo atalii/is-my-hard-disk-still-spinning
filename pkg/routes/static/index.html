@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TaliCorp™ Network Status</title>
+    <link href="/styles.css" type="text/css" rel="stylesheet"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+  </head>
+  <body class="bg-rose-50 font-sans">
+    <div class="w-full py-5 px-10 bg-rose-950 flex items-center">
+      <h1 class="grow text-3xl text-rose-50">TaliCorp™ Network Status</h1>
+
+      <img class="max-h-12 flex-none hover:rotate-90 duration-200"
+        alt="logo"
+        src="https://home.tali.network/static/art/favicons/tc-logo-red-192x192.png"/>
+    </div>
+
+    <div class="flex items-center w-full py-5 px-10 gap-5">
+      <div hx-get="/stats/uptime" hx-trigger="load, every 15s"></div>
+      <div class="grow text-right">TaliCorp™ has officially divested from all fracking engagements following a Q4 revenue failure.</div>
+    </div>
+
+    <div class="flex flex-wrap gap-5 w-full py-5 px-10">
+      {{ range .Sites }}
+        <a href="{{.Url}}">
+          <div class="h-32 w-32 border-2 hover:border-4 bg-indigo-100 border-rose-950 flex justify-center items-center">
+            <div>{{.Name}}</div>
+          </div>
+        </a>
+      {{ end }}
+    </div>
+
+    <pre class="py-5 px-10" hx-get="/stats/zpool-status" hx-trigger="load, every 15s"></pre>
+    <pre class="py-5 px-10" hx-get="/stats/caddy-status" hx-trigger="load, every 15s"></pre>
+  </body>
+</html>
