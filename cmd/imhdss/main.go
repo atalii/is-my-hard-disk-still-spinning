@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/cmd"
-	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/sys"
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/routes"
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/sys"
 )
 
 func makeRoute(inner func() string) func(http.ResponseWriter, *http.Request) {
@@ -46,17 +46,20 @@ func asHtml(inner func() (*string, *string)) func() string {
 }
 
 func main() {
+	if err := routes.InitState(); err != nil {
+		log.Fatalf("cannot start: %v", err)
+	}
+
 	uptime := sys.Uptime()
 
 	zpool_status_route := makeRoute(asHtml(cmd.Runner("zpool", "status")))
-	caddy_status_route := makeRoute(asHtml(cmd.Runner("systemctl", "status", "caddy")))
 	uptime_route := makeRoute(asHtml(uptime))
 
+	http.HandleFunc("/stats/systemd/{service}", routes.ServiceStatusRoute)
 	http.HandleFunc("/stats/zpool-status", zpool_status_route)
-	http.HandleFunc("/stats/caddy-status", caddy_status_route)
 	http.HandleFunc("/stats/uptime", uptime_route)
-	http.HandleFunc("/", routes.Index)
 	http.HandleFunc("/styles.css", routes.Styles)
+	http.HandleFunc("/", routes.Index)
 
 	log.Println("Will listen on 127.0.0.1:4525")
 	err := http.ListenAndServe("127.0.0.1:4525", nil)

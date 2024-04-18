@@ -1,9 +1,9 @@
 package routes
 
 import (
+	"html/template"
 	"log"
 	"net/http"
-	"html/template"
 
 	_ "embed"
 )
@@ -21,11 +21,21 @@ type Site struct {
 	Name string
 }
 
-type IndexData struct{
-	Sites []Site
+type Service struct {
+	Name string
+}
+
+type IndexData struct {
+	Sites    []Site
+	Services []Service
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
 	if r.Method != "GET" {
 		w.WriteHeader(405)
 		return
@@ -41,16 +51,27 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	if err := tmpl.Execute(w, IndexData{
 		Sites: []Site{
 			Site{
-				Url: "https://wiki-js.home.tali.network",
+				Url:  "https://wiki-js.home.tali.network",
 				Name: "wiki.js",
 			},
 			Site{
-				Url: "https://jf-home.tali.network",
+				Url:  "https://jf-home.tali.network",
 				Name: "jellyfin",
 			},
 			Site{
-				Url: "https://in-home.tali.network",
+				Url:  "https://in-home.tali.network",
 				Name: "invoke-ai",
+			},
+		},
+		Services: []Service{
+			Service{
+				Name: "tailscaled",
+			},
+			Service{
+				Name: "postgresql",
+			},
+			Service{
+				Name: "caddy",
 			},
 		},
 	}); err != nil {
@@ -63,6 +84,6 @@ func Styles(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(405)
 	}
 
-	w.Header().Add("Content-Type", "text/css");
+	w.Header().Add("Content-Type", "text/css")
 	w.Write(styles)
 }
