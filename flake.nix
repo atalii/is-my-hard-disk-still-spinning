@@ -18,7 +18,7 @@
         '';
 
         nativeBuildInputs = with pkgs; [ tailwindcss ];
-        vendorHash = null;
+        vendorHash = "sha256-qIdz2WT+Z7zLCNvW7ddeKFw0APPF35BnJaG5Biz8G18=";
       };
   };
 }
