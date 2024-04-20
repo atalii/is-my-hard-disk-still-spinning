@@ -27,16 +27,12 @@ func asHtml(inner func() (*string, *string)) func() string {
 				"<div class=\"val\">%v</div>",
 				*val,
 			)
-		}
-
-		if err != nil {
+		} else {
 			return fmt.Sprintf(
 				"<div class=\"err\">%v</div>",
 				*err,
 			)
 		}
-
-		panic("unreachable")
 	}
 }
 
