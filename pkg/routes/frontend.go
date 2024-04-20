@@ -36,11 +36,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != "GET" {
-		w.WriteHeader(405)
-		return
-	}
-
 	tmpl, err := template.New("index").Parse(index)
 	if err != nil {
 		log.Printf("couldn't build index template: %v", err)
@@ -80,10 +75,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func Styles(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(405)
-	}
-
 	w.Header().Add("Content-Type", "text/css")
 	w.Write(styles)
 }

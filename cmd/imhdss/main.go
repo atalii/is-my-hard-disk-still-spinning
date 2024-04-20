@@ -11,10 +11,6 @@ import (
 
 func makeRoute(inner func() string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			w.WriteHeader(405)
-		}
-
 		w.Header().Add("Content-Type", "text/html; charset=utf-8")
 
 		txt := inner()
@@ -51,11 +47,11 @@ func main() {
 
 	zpool_status_route := makeRoute(asHtml(cmd.Runner("zpool", "status")))
 
-	http.HandleFunc("/stats/systemd/{service}", routes.ServiceStatusRoute)
-	http.HandleFunc("/stats/zpool-status", zpool_status_route)
+	http.HandleFunc("GET /stats/systemd/{service}", routes.ServiceStatusRoute)
+	http.HandleFunc("GET /stats/zpool-status", zpool_status_route)
 	http.HandleFunc("GET /stats/uptime", routes.UptimeRoute)
-	http.HandleFunc("/styles.css", routes.Styles)
-	http.HandleFunc("/", routes.Index)
+	http.HandleFunc("GET /styles.css", routes.Styles)
+	http.HandleFunc("GET /", routes.Index)
 
 	log.Println("Will listen on 127.0.0.1:4525")
 	err := http.ListenAndServe("127.0.0.1:4525", nil)
