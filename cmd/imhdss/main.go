@@ -7,7 +7,6 @@ import (
 
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/cmd"
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/routes"
-	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/sys"
 )
 
 func makeRoute(inner func() string) func(http.ResponseWriter, *http.Request) {
@@ -50,14 +49,11 @@ func main() {
 		log.Fatalf("cannot start: %v", err)
 	}
 
-	uptime := sys.Uptime()
-
 	zpool_status_route := makeRoute(asHtml(cmd.Runner("zpool", "status")))
-	uptime_route := makeRoute(asHtml(uptime))
 
 	http.HandleFunc("/stats/systemd/{service}", routes.ServiceStatusRoute)
 	http.HandleFunc("/stats/zpool-status", zpool_status_route)
-	http.HandleFunc("/stats/uptime", uptime_route)
+	http.HandleFunc("GET /stats/uptime", routes.UptimeRoute)
 	http.HandleFunc("/styles.css", routes.Styles)
 	http.HandleFunc("/", routes.Index)
 
