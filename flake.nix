@@ -18,7 +18,7 @@
         '';
 
         nativeBuildInputs = with pkgs; [ tailwindcss ];
-        vendorHash = "sha256-qIdz2WT+Z7zLCNvW7ddeKFw0APPF35BnJaG5Biz8G18=";
+        vendorHash = "sha256-zCpmFDFrXwEIHj2cS7IupWL2aZj21TN1W3rweyaajOI=";
       };
   };
 }
