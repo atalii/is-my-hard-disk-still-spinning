@@ -1,0 +1,10 @@
+links {
+	imhdss  url="https://github.com/atalii/is-my-hard-disk-still-spinning"
+	weather url="https://wttr.in"
+}
+
+services {
+	tailscaled
+	postgres
+	imhdss
+}

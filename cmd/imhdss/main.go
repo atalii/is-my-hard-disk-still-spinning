@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/cmd"
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/conf"
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/routes"
 )
 
@@ -37,6 +39,17 @@ func asHtml(inner func() (*string, *string)) func() string {
 }
 
 func main() {
+	confPath := flag.String("config", "/etc/imhdss/conf.kdl", "Location of the configuration file.")
+
+	flag.Parse()
+	if err := conf.ReadConf(*confPath); err != nil {
+		log.Fatalf("while reading configuration: %s: %v", *confPath, err)
+	} else {
+		run()
+	}
+}
+
+func run() {
 	if err := routes.InitState(); err != nil {
 		log.Fatalf("cannot start: %v", err)
 	}

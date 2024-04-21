@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/conf"
 	"html/template"
 	"log"
 	"net/http"
@@ -65,7 +66,7 @@ func ServiceStatusRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tmpl.Execute(w, Service{
+	if err := tmpl.Execute(w, conf.Service{
 		Name: serviceName,
 	}); err != nil {
 		log.Printf("service.up.html: %v", err)

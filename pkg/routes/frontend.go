@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/conf"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,18 +17,9 @@ var index string
 //go:embed static/styles.css
 var styles []byte
 
-type Site struct {
-	Url  string
-	Name string
-}
-
-type Service struct {
-	Name string
-}
-
 type IndexData struct {
-	Sites    []Site
-	Services []Service
+	Links    []conf.Link
+	Services []conf.Service
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -44,31 +36,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := tmpl.Execute(w, IndexData{
-		Sites: []Site{
-			Site{
-				Url:  "https://wiki-js.home.tali.network",
-				Name: "wiki.js",
-			},
-			Site{
-				Url:  "https://jf-home.tali.network",
-				Name: "jellyfin",
-			},
-			Site{
-				Url:  "https://in-home.tali.network",
-				Name: "invoke-ai",
-			},
-		},
-		Services: []Service{
-			Service{
-				Name: "tailscaled",
-			},
-			Service{
-				Name: "postgresql",
-			},
-			Service{
-				Name: "caddy",
-			},
-		},
+		Links:    conf.Links(),
+		Services: conf.Services(),
 	}); err != nil {
 		log.Printf("index template execution failed: %v", err)
 	}
