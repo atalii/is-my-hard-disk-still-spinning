@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/atalii/is-my-hard-disk-still-spinning/v2/pkg/conf"
+	"html"
 	"html/template"
 	"log"
 	"net/http"
@@ -46,4 +47,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func Styles(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/css")
 	w.Write(styles)
+}
+
+func Slogan(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/html")
+	slogan := html.EscapeString(conf.Slogan())
+	w.Write([]byte(slogan))
 }

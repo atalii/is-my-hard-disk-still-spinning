@@ -2,7 +2,9 @@ package conf
 
 import (
 	"errors"
+	"fmt"
 	"log"
+	"math/rand"
 	"os"
 
 	"github.com/sblinch/kdl-go"
@@ -18,9 +20,14 @@ type Link struct {
 	Url  string
 }
 
+type Meta struct {
+	Slogans []string
+}
+
 var conf struct {
 	links    []Link
 	services []Service
+	meta     *Meta
 }
 
 func ReadConf(path string) error {
@@ -45,6 +52,16 @@ func Services() []Service {
 	return conf.services
 }
 
+func Slogan() string {
+	n := len(conf.meta.Slogans)
+
+	if n == 0 {
+		return "meow?? why is anyone reading this"
+	} else {
+		return conf.meta.Slogans[rand.Intn(n)]
+	}
+}
+
 func load(doc *document.Document) error {
 	for _, node := range doc.Nodes {
 		var err error
@@ -55,6 +72,8 @@ func load(doc *document.Document) error {
 			err = loadLinks(node.Children)
 		case "services":
 			err = loadServices(node.Children)
+		case "meta":
+			err = loadMeta(node.Children)
 		}
 
 		if err != nil {
@@ -97,5 +116,37 @@ func loadServices(services []*document.Node) error {
 		})
 	}
 
+	return nil
+}
+
+func loadMeta(nodes []*document.Node) error {
+	if conf.meta != nil {
+		return errors.New("meta declared twice")
+	}
+
+	conf.meta = &Meta{}
+
+	for _, node := range nodes {
+		name := node.Name.Value.(string)
+		switch name {
+		case "slogan":
+			if err := loadSlogan(node.Arguments); err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("unexpected node: %s", name)
+		}
+	}
+
+	return nil
+}
+
+func loadSlogan(slogans []*document.Value) error {
+	if len(slogans) != 1 {
+		return errors.New("slogan nodes should only have one argument")
+	}
+
+	slogan := slogans[0].Value.(string)
+	conf.meta.Slogans = append(conf.meta.Slogans, slogan)
 	return nil
 }

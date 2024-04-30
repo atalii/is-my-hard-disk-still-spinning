@@ -59,6 +59,7 @@ func run() {
 	http.HandleFunc("GET /stats/systemd/{service}", routes.ServiceStatusRoute)
 	http.HandleFunc("GET /stats/zpool-status", zpool_status_route)
 	http.HandleFunc("GET /stats/uptime", routes.UptimeRoute)
+	http.HandleFunc("GET /slogan", routes.Slogan)
 	http.HandleFunc("GET /styles.css", routes.Styles)
 	http.HandleFunc("GET /", routes.Index)
 
