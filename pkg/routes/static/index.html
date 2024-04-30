@@ -17,20 +17,22 @@
         src="https://home.tali.network/static/art/favicons/tc-logo-red-192x192.png"/>
     </div>
 
-    <div class="flex items-center w-full py-5 px-10 gap-5">
+    <div class="flex items-end w-full py-5 px-10 gap-5">
       <div hx-get="/stats/uptime" hx-trigger="load, every 15s"></div>
       <div class="grow text-right">TaliCorp™ has officially divested from all fracking engagements following a Q4 revenue failure.</div>
     </div>
 
-    <div class="flex flex-wrap gap-5 w-full py-5 px-10">
+    <div class="flex flex-wrap w-full py-5 px-5">
       {{ range .Links }}
-        <a href="{{.Url}}">
-          <div class="h-32 w-32 border-2 hover:border-4 bg-indigo-100 border-rose-950 flex justify-center items-center text-center">
+        <a href="{{.Url}}" class="basis-1/2 md:basis-1/4 px-5">
+          <div class="h-12 w-full border-b-2 bg-violet-200 hover:bg-violet-300 border-rose-950 flex justify-center items-center text-center text-xl duration-100">
             <div>{{.Name}}</div>
           </div>
         </a>
       {{ end }}
+    </div>
 
+    <div class="flex flex-wrap gap-5 w-full py-5 px-10">
       {{ range .Services }}
         <div hx-get="/stats/systemd/{{.Name}}" hx-trigger="load, every 15s"></div>
       {{ end }}
