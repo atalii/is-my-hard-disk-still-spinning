@@ -1,6 +1,9 @@
 links {
 	imhdss  url="https://github.com/atalii/is-my-hard-disk-still-spinning"
 	weather url="https://wttr.in"
+	filler  url="https://example.com"
+	"also filler" url="https://example.com"
+	"lorem ipsum" url="https://example.com"
 }
 
 services {
