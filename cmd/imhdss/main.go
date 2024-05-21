@@ -57,6 +57,7 @@ func run() {
 	zpool_status_route := makeRoute(asHtml(cmd.Runner("zpool", "status")))
 
 	http.HandleFunc("GET /stats/systemd/{service}", routes.ServiceStatusRoute)
+	http.HandleFunc("GET /stats/systemd-all", routes.ServiceAllRoute)
 	http.HandleFunc("GET /stats/zpool-status", zpool_status_route)
 	http.HandleFunc("GET /stats/uptime", routes.UptimeRoute)
 	http.HandleFunc("GET /slogan", routes.Slogan)
