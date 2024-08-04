@@ -3,10 +3,9 @@ module.exports = {
   content: ["./static/*.html"],
   theme: {
     fontFamily: {
-      "sans": "Input Sans",
+	"sans": "'Berkeley Mono', 'Input Sans', sans-serif",
     },
     extend: {},
   },
   plugins: [],
 }
-
